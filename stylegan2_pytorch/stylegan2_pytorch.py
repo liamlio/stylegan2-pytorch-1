@@ -124,15 +124,11 @@ class Dataset(data.Dataset):
         super().__init__()
         self.folder = folder
         self.image_size = image_size        
-        self.paths = [p for ext in EXTS for p in Path(f'{folder}').glob(f'**/*.{ext}')]
+        self.paths = pd.read_csv(folder)
 
         self.transform = transform = transforms.Compose([
-            transforms.Lambda(convert_transparent_to_rgb),
-            transforms.Lambda(partial(resize_to_minimum_size, image_size)),
             transforms.RandomHorizontalFlip(),
-            transforms.RandomResizedCrop(image_size, scale=(0.7, 1.0)),
             transforms.ToTensor(),
-            transforms.Lambda(expand_to_rgb)
         ])
 
     def __len__(self):
@@ -140,7 +136,7 @@ class Dataset(data.Dataset):
 
     def __getitem__(self, index):
         path = self.paths[index]
-        img = Image.open(path)
+        img = path
         return self.transform(img)
 
 # stylegan2 classes
@@ -152,7 +148,7 @@ class StyleVectorizer(nn.Module):
         layers = []
         for i in range(depth):
             layers.extend([nn.Linear(emb, emb), leaky_relu(0.2)])
-
+`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   `
         self.net = nn.Sequential(*layers)
 
     def forward(self, x):
